@@ -2,717 +2,1418 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>MoonBot V6</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+:root{
+  --bg:#050711;
+  --panel:#0d1220;
+  --panel2:#11182a;
+  --text:#f4f7ff;
+  --muted:#8993aa;
+  --accent:#7c5cff;
+  --accent2:#00d9ff;
+  --border:rgba(255,255,255,.09);
+}
+
+body.light{
+  --bg:#eef2f8;
+  --panel:#ffffff;
+  --panel2:#f5f7fb;
+  --text:#101522;
+  --muted:#667085;
+  --border:rgba(0,0,0,.1);
+}
+
 body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#080b14;
-color:white;
-height:100vh;
-display:flex;
-overflow:hidden
-}
-body.light{background:#f4f5f8;color:#111}
-
-#app{display:flex;width:100%;height:100%}
-
-#side{
-width:240px;
-background:#101522;
-padding:18px;
-border-right:1px solid #293044
-}
-.light #side,.light #top,.light #bottom{background:white}
-
-.logo{font-size:25px;font-weight:bold;margin-bottom:4px}
-.ver{color:#6fdfff;font-size:12px;margin-bottom:20px}
-
-button,select{
-border:0;
-border-radius:9px;
-padding:10px;
-cursor:pointer
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow:hidden;
 }
 
-.sidebtn{
-width:100%;
-margin:5px 0;
-background:#1a2132;
-color:white;
-text-align:left
-}
-
-.light .sidebtn{
-background:#edf0f6;
-color:#111
-}
-
-#main{flex:1;display:flex;flex-direction:column}
-
-#top{
-height:60px;
-padding:0 20px;
-background:#101522;
-border-bottom:1px solid #293044;
-display:flex;
-align-items:center;
-justify-content:space-between
-}
-
-.online{color:#4cff9b}
-
-#chat{
-flex:1;
-overflow-y:auto;
-padding:25px
-}
-
-.welcome{
-text-align:center;
-margin:50px auto;
-max-width:700px
-}
-
-.welcome h1{font-size:42px}
-
-.cardbox{
-display:flex;
-gap:12px;
-margin-top:25px
-}
-
-.card{
-flex:1;
-background:#101522;
-padding:20px;
-border-radius:14px;
-border:1px solid #293044
-}
-
-.msg{
-max-width:800px;
-margin:12px auto;
-padding:14px;
-border-radius:13px;
-white-space:pre-wrap;
-line-height:1.5
-}
-
-.user{background:#303a70}
-.bot{
-background:#101522;
-border:1px solid #293044
-}
-
-.name{
-font-size:11px;
-color:#6fdfff;
-font-weight:bold;
-margin-bottom:5px
-}
-
-#bottom{
-padding:15px;
-background:#101522;
-border-top:1px solid #293044
-}
-
-#box{
-max-width:850px;
-margin:auto;
-display:flex;
-gap:8px
-}
-
-#input{
-flex:1;
-height:52px;
-resize:none;
-background:#1a2132;
-color:white;
-border:1px solid #30394f;
-border-radius:12px;
-padding:14px;
-outline:none
-}
-
-.light #input{
-background:#edf0f6;
-color:#111
-}
-
-.send{
-width:55px;
-background:#735cff;
-color:white;
-font-size:20px
-}
-
-.voice{background:#293249;color:white}
-
-#settings{
-position:fixed;
-right:20px;
-top:75px;
-width:300px;
-background:#101522;
-border:1px solid #30394f;
-border-radius:15px;
-padding:18px;
-z-index:20;
-display:none;
-box-shadow:0 15px 50px #0008
-}
-
-#settings.show{display:block}
-
-.light #settings{
-background:white;
-color:#111
-}
-
-.setting{
-margin:15px 0
-}
-
-.setting label{
-display:block;
-font-size:13px;
-color:#9da7bd;
-margin-bottom:6px
-}
-
-.setting select{
-width:100%;
-background:#1a2132;
-color:white
-}
-
-.light .setting select{
-background:#edf0f6;
-color:#111
-}
-
+/* INTRO */
 #intro{
-position:fixed;
-inset:0;
-background:#02030a;
-z-index:999;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-animation:hide 1s ease 4s forwards
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#02030a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:opacity 1s ease,visibility 1s ease;
+}
+
+#intro.hide{
+  opacity:0;
+  visibility:hidden;
+}
+
+.stars{
+  position:absolute;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 20% 20%,white 1px,transparent 2px),
+    radial-gradient(circle at 70% 30%,white 1px,transparent 2px),
+    radial-gradient(circle at 40% 75%,white 1px,transparent 2px),
+    radial-gradient(circle at 85% 80%,white 1px,transparent 2px),
+    radial-gradient(circle at 55% 55%,white 1px,transparent 2px);
+  background-size:180px 180px;
+  animation:starsMove 12s linear infinite;
+  opacity:.75;
+}
+
+@keyframes starsMove{
+  from{transform:scale(1)}
+  to{transform:scale(1.18)}
 }
 
 .moon{
-width:190px;
-height:190px;
-border-radius:50%;
-background:radial-gradient(circle at 35% 30%,#fff,#aaa 55%,#444);
-box-shadow:0 0 50px white,0 0 130px #6675ff;
-animation:zoom 4s ease
+  width:210px;
+  height:210px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 30%,#fff,#cfd6e5 35%,#8d98ae 70%,#4b5264);
+  box-shadow:
+    0 0 40px #b9c8ff,
+    0 0 100px rgba(124,92,255,.65),
+    0 0 180px rgba(0,217,255,.25);
+  animation:moonZoom 5s ease-in-out infinite alternate;
 }
 
-.introtitle{
-font-size:45px;
-letter-spacing:8px;
-margin-top:25px
+@keyframes moonZoom{
+  from{transform:scale(.8)}
+  to{transform:scale(1.12)}
 }
 
-@keyframes zoom{
-0%{transform:scale(.4)}
-100%{transform:scale(1)}
+.introContent{
+  position:relative;
+  z-index:2;
+  text-align:center;
 }
 
-@keyframes hide{
-to{opacity:0;visibility:hidden}
+.introTitle{
+  margin-top:35px;
+  font-size:clamp(40px,8vw,90px);
+  letter-spacing:12px;
+  font-weight:900;
+  text-shadow:0 0 25px #7c5cff;
 }
 
-@media(max-width:650px){
-#side{display:none}
-.cardbox{flex-direction:column}
+.introSub{
+  margin-top:15px;
+  color:#b8c0d9;
+  letter-spacing:4px;
+  font-size:14px;
+}
+
+.introCreator{
+  margin-top:10px;
+  color:#00d9ff;
+  letter-spacing:3px;
+  font-size:13px;
+}
+
+/* APP */
+.app{
+  display:flex;
+  height:100vh;
+}
+
+.sidebar{
+  width:260px;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:900;
+  padding:10px 5px 18px;
+}
+
+.logo span{
+  color:var(--accent2);
+}
+
+button,select{
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:12px;
+  padding:11px 13px;
+  cursor:pointer;
+}
+
+button:hover{
+  border-color:var(--accent);
+}
+
+.sectionTitle{
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  margin-top:10px;
+}
+
+.modeGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+
+.modeGrid button.active{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+
+.sidebarBottom{
+  margin-top:auto;
+}
+
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+
+.header{
+  height:65px;
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+}
+
+.status{
+  color:#35e58b;
+  font-size:13px;
+}
+
+.chat{
+  flex:1;
+  overflow-y:auto;
+  padding:25px;
+}
+
+.message{
+  display:flex;
+  margin-bottom:17px;
+}
+
+.message.user{
+  justify-content:flex-end;
+}
+
+.bubble{
+  max-width:min(800px,85%);
+  padding:14px 17px;
+  border-radius:18px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+
+.bot .bubble{
+  background:var(--panel2);
+  border:1px solid var(--border);
+}
+
+.user .bubble{
+  background:linear-gradient(135deg,var(--accent),#5940d9);
+}
+
+.inputArea{
+  padding:15px;
+  background:var(--panel);
+  border-top:1px solid var(--border);
+}
+
+.inputBox{
+  display:flex;
+  gap:10px;
+  max-width:1000px;
+  margin:auto;
+}
+
+textarea{
+  flex:1;
+  min-height:55px;
+  max-height:150px;
+  resize:none;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  outline:none;
+  background:var(--panel2);
+  color:var(--text);
+  font-size:15px;
+}
+
+.send{
+  min-width:90px;
+  background:var(--accent);
+  border-color:var(--accent);
+  font-weight:bold;
+}
+
+.settings{
+  position:fixed;
+  right:20px;
+  top:80px;
+  width:300px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
+  z-index:50;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  display:none;
+}
+
+.settings.show{
+  display:block;
+}
+
+.setting{
+  margin-bottom:15px;
+}
+
+.setting label{
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:7px;
+}
+
+@media(max-width:750px){
+  .sidebar{
+    width:75px;
+    padding:10px;
+  }
+
+  .logo{
+    font-size:0;
+    text-align:center;
+  }
+
+  .logo span{
+    font-size:22px;
+  }
+
+  .sidebar button{
+    font-size:0;
+    padding:12px 5px;
+  }
+
+  .sidebar button::first-letter{
+    font-size:18px;
+  }
+
+  .sectionTitle{
+    display:none;
+  }
+
+  .modeGrid{
+    grid-template-columns:1fr;
+  }
+
+  .chat{
+    padding:15px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- INTRO CINEMATIC -->
 <div id="intro">
-<div class="moon"></div>
-<div class="introtitle">MOONBOT</div>
-<div>CREATED BY NAZREEL • 2026</div>
+  <div class="stars"></div>
+  <div class="introContent">
+    <div class="moon"></div>
+    <div class="introTitle">MOONBOT</div>
+    <div class="introSub">V6 • CODING ROBOT</div>
+    <div class="introCreator">CREATED BY NAZREEL • 2026</div>
+  </div>
 </div>
 
-<div id="app">
+<div class="app">
 
-<aside id="side">
+  <aside class="sidebar">
 
-<div class="logo">🌙 MoonBot</div>
-<div class="ver">V6 CODING ROBOT</div>
+    <div class="logo">🌙 MOON<span>BOT</span></div>
 
-<button class="sidebtn" onclick="newChat()">＋ New Chat</button>
-<button class="sidebtn" onclick="toggleSettings()">⚙️ Settings</button>
-<button class="sidebtn" onclick="showHistory()">🕘 History</button>
-<button class="sidebtn" onclick="clearHistory()">🗑️ Clear History</button>
+    <button onclick="newChat()">➕ New Chat</button>
+    <button onclick="toggleSettings()">⚙️ Settings</button>
+    <button onclick="showHistory()">🕘 History</button>
+    <button onclick="clearHistory()">🗑️ Clear History</button>
 
-<br>
+    <div class="sectionTitle">Mood</div>
 
-<div class="ver">SPEED</div>
+    <div class="modeGrid">
+      <button id="mood-biasa" onclick="setMood('biasa')">😐 Biasa</button>
+      <button id="mood-gembira" onclick="setMood('gembira')">😊 Gembira</button>
+      <button id="mood-sedih" onclick="setMood('sedih')">😢 Sedih</button>
+      <button id="mood-marah" onclick="setMood('marah')">😡 Marah</button>
+    </div>
 
-<button class="sidebtn" onclick="setSpeed('Standard')">Standard</button>
-<button class="sidebtn" onclick="setSpeed('Medium')">Medium</button>
-<button class="sidebtn" onclick="setSpeed('Fast')">Fast</button>
+    <div class="sectionTitle">Speed</div>
 
-</aside>
+    <div class="modeGrid">
+      <button id="speed-standard" onclick="setSpeed('standard')">🐢 Standard</button>
+      <button id="speed-medium" onclick="setSpeed('medium')">⚡ Medium</button>
+      <button id="speed-fast" onclick="setSpeed('fast')">🚀 Fast</button>
+    </div>
 
-<main id="main">
+    <div class="sidebarBottom">
+      <button onclick="aboutMoon()" style="width:100%">
+        🤖 About MoonBot
+      </button>
+    </div>
 
-<header id="top">
-<span class="online">● MoonBot Online</span>
-<span id="speed">Standard</span>
-</header>
+  </aside>
 
-<section id="chat">
+  <main class="main">
 
-<div class="welcome" id="welcome">
+    <header class="header">
+      <div>
+        <b>MoonBot V6</b>
+        <div class="status">● Online • Local AI</div>
+      </div>
 
-<h1>🌙 MoonBot V6</h1>
+      <div id="speedLabel">Standard</div>
+    </header>
 
-<p>Futuristic Coding Robot created by Nazreel.</p>
+    <section id="chat" class="chat"></section>
 
-<div class="cardbox">
+    <div class="inputArea">
+      <div class="inputBox">
+        <textarea
+          id="input"
+          placeholder="Tanya MoonBot... Enter untuk hantar"
+        ></textarea>
 
-<div class="card">
-<b>👨‍💻 Creator</b><br>
-Nazreel • 2026
+        <button class="send" onclick="sendMessage()">SEND</button>
+      </div>
+    </div>
+
+  </main>
 </div>
 
-<div class="card">
-<b>⚡ Coding</b><br>
-HTML • CSS • JavaScript • Python
-</div>
+<div id="settings" class="settings">
 
-<div class="card">
-<b>🧠 Knowledge</b><br>
-BM • English • General Knowledge
-</div>
+  <h3 style="margin-bottom:18px">⚙️ Settings</h3>
 
-</div>
-</div>
+  <div class="setting">
+    <label>Theme</label>
+    <select id="themeSelect" onchange="setTheme(this.value)">
+      <option value="dark">🌙 Dark</option>
+      <option value="light">☀️ White</option>
+    </select>
+  </div>
 
-</section>
+  <div class="setting">
+    <label>Language</label>
+    <select id="languageSelect" onchange="setLanguage(this.value)">
+      <option value="ms">Bahasa Melayu</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+      <option value="ja">日本語</option>
+      <option value="zh">中文</option>
+      <option value="ko">한국어</option>
+    </select>
+  </div>
 
-<footer id="bottom">
+  <div class="setting">
+    <label>Voice</label>
+    <button onclick="toggleVoice()" id="voiceButton">
+      🔊 Voice ON
+    </button>
+  </div>
 
-<div id="box">
-
-<button class="send voice" onclick="voiceInput()">🎤</button>
-
-<textarea
-id="input"
-placeholder="Tanya MoonBot..."
-></textarea>
-
-<button class="send" onclick="sendMessage()">➤</button>
-
-</div>
-
-</footer>
-
-</main>
-</div>
-
-<div id="settings">
-
-<h2>⚙️ Settings</h2>
-
-<div class="setting">
-<label>Theme</label>
-<button class="sidebtn" onclick="toggleTheme()">🌙 Dark / ☀️ White</button>
-</div>
-
-<div class="setting">
-<label>Mood</label>
-
-<select id="mood">
-<option>Biasa</option>
-<option>Gembira</option>
-<option>Sedih</option>
-<option>Marah</option>
-</select>
-
-</div>
-
-<div class="setting">
-<label>Language</label>
-
-<select id="language">
-<option>Bahasa Melayu</option>
-<option>English</option>
-<option>Español</option>
-<option>Français</option>
-<option>日本語</option>
-<option>中文</option>
-<option>한국어</option>
-</select>
-
-</div>
-
-<button class="sidebtn" onclick="toggleVoice()">
-🔊 Voice ON / OFF
-</button>
-
-<button class="sidebtn" onclick="toggleSettings()">
-Tutup Settings
-</button>
+  <button onclick="toggleSettings()" style="width:100%">Close</button>
 
 </div>
 
 <script>
 
 /* =========================
-   MOONBOT V6
+   MOONBOT CORE
 ========================= */
 
-let speed="Standard";
-let voice=false;
-let messages=[];
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const settings = document.getElementById("settings");
 
-const input=document.getElementById("input");
-const chat=document.getElementById("chat");
+let mood = localStorage.getItem("moonMood") || "biasa";
+let speed = localStorage.getItem("moonSpeed") || "standard";
+let language = localStorage.getItem("moonLanguage") || "ms";
+let voice = localStorage.getItem("moonVoice") !== "false";
 
-/* ENTER = SEND
-   SHIFT + ENTER = NEW LINE
-*/
+let history = JSON.parse(localStorage.getItem("moonHistory") || "[]");
+
+const creator = {
+  name:"Nazreel",
+  project:"MoonBot",
+  version:"V6 Coding Robot",
+  year:"2026",
+  technology:"HTML + CSS + JavaScript",
+  assisted:"ChatGPT"
+};
+
+
+/* =========================
+   STARTUP
+========================= */
+
+window.addEventListener("load",()=>{
+  setTimeout(()=>{
+    document.getElementById("intro").classList.add("hide");
+  },5200);
+
+  loadSettings();
+  loadHistory();
+
+  if(history.length===0){
+    addBot(
+`🌙 Selamat datang ke MoonBot V6!
+
+Saya MoonBot, coding robot yang dicipta oleh Nazreel pada tahun 2026.
+
+🧠 Saya mempunyai knowledge asas dalam:
+• Matematik
+• Sains
+• Sejarah
+• Geografi
+• Pengetahuan Am
+• Bahasa Melayu
+• English
+• RBT / ICT
+• Coding
+• Sukan
+• PSV
+• Muzik
+• PJPK
+• Bahasa-bahasa lain
+
+⌨️ Enter = hantar
+↵ Shift + Enter = baris baharu
+
+Tanya saya apa sahaja yang saya tahu. 🚀`
+    );
+  }
+});
+
+
+/* =========================
+   ENTER KEY
+========================= */
 
 input.addEventListener("keydown",function(e){
 
-if(e.key==="Enter" && !e.shiftKey){
+  if(e.key==="Enter" && !e.shiftKey){
 
-e.preventDefault();
+    e.preventDefault();
 
-sendMessage();
-
-}
+    sendMessage();
+  }
 
 });
 
 
+/* =========================
+   CHAT
+========================= */
+
+function addMessage(text,type){
+
+  const row=document.createElement("div");
+  row.className="message "+type;
+
+  const bubble=document.createElement("div");
+  bubble.className="bubble";
+
+  bubble.textContent=text;
+
+  row.appendChild(bubble);
+  chat.appendChild(row);
+
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function addBot(text){
+  addMessage(text,"bot");
+}
+
+function addUser(text){
+  addMessage(text,"user");
+}
+
+
+/* =========================
+   SEND
+========================= */
+
 function sendMessage(){
 
-const text=input.value.trim();
+  const text=input.value.trim();
 
-if(text==="") return;
+  if(!text)return;
 
-addMessage("YOU",text,"user");
+  addUser(text);
 
-input.value="";
+  input.value="";
 
-messages.push(text);
+  history.push({
+    type:"user",
+    text:text,
+    time:Date.now()
+  });
 
-localStorage.setItem(
-"moon_messages",
-JSON.stringify(messages)
-);
+  saveHistory();
 
-let delay=700;
+  const delay =
+    speed==="fast" ? 150 :
+    speed==="medium" ? 450 :
+    850;
 
-if(speed==="Fast") delay=150;
-if(speed==="Medium") delay=350;
+  setTimeout(()=>{
 
-setTimeout(function(){
+    const answer=brain(text);
 
-let answer=brain(text);
+    addBot(answer);
 
-addMessage("MOONBOT",answer,"bot");
+    history.push({
+      type:"bot",
+      text:answer,
+      time:Date.now()
+    });
 
-if(voice){
-speak(answer);
-}
+    saveHistory();
 
-},delay);
+    speak(answer);
 
-}
-
-
-function addMessage(name,text,type){
-
-document.getElementById("welcome").style.display="none";
-
-const div=document.createElement("div");
-
-div.className="msg "+type;
-
-div.innerHTML=
-'<div class="name">'+name+'</div>'+
-escapeHTML(text);
-
-chat.appendChild(div);
-
-chat.scrollTop=chat.scrollHeight;
-
+  },delay);
 }
 
 
-function escapeHTML(text){
+/* =========================
+   TEXT NORMALIZER
+========================= */
 
-return text
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;");
+function normalize(text){
+
+  return text
+    .toLowerCase()
+    .replace(/[!?.,]/g," ")
+    .replace(/\s+/g," ")
+    .trim();
 
 }
 
 
-function brain(text){
+/* =========================
+   MATH ENGINE
+========================= */
 
-let q=text.toLowerCase();
+function mathAnswer(q){
 
-q=q
-.replaceAll("sape","siapa")
-.replaceAll("sapa","siapa")
-.replaceAll("siape","siapa")
-.replaceAll("ape","apa")
-.replaceAll("nk","nak")
-.replaceAll("tk","tak")
-.replaceAll("yg","yang")
-.replaceAll("dgn","dengan")
-.replaceAll("camne","bagaimana")
-.replaceAll("cmne","bagaimana");
+  let expression=q
+    .replace(/berapa/g,"")
+    .replace(/kira/g,"")
+    .replace(/hitung/g,"")
+    .replace(/calculate/g,"")
+    .replace(/x/g,"*")
+    .replace(/÷/g,"/")
+    .replace(/×/g,"*")
+    .replace(/,/g,".");
 
-if(q.includes("hai") || q.includes("hello") || q==="hi")
-return "HAAAII 🔥🌙 MoonBot V6 dah ready!";
+  expression=expression.replace(/[^0-9+\-*/().% ]/g,"");
 
-if(q.includes("siapa pencipta") ||
-q.includes("siapa buat moonbot") ||
-q.includes("creator"))
-return "Pencipta MoonBot ialah Nazreel. Projek ini bermula pada tahun 2026 menggunakan HTML, CSS dan JavaScript dengan bantuan ChatGPT.";
+  if(!expression)return null;
 
-if(q.includes("moonbot"))
-return "MoonBot ialah chatbot futuristik yang dibina oleh Nazreel menggunakan HTML, CSS dan JavaScript.";
+  try{
 
-if(q.includes("sejarah"))
-return "MoonBot bermula daripada idea Nazreel pada tahun 2026. Projek ini berkembang melalui beberapa versi sehingga V6.";
+    if(!/[+\-*/%]/.test(expression))return null;
 
-if(q.includes("html"))
-return "HTML digunakan untuk membina struktur laman web.";
+    const result=Function(
+      '"use strict";return ('+expression+')'
+    )();
 
-if(q.includes("css"))
-return "CSS digunakan untuk design, warna, susun atur dan animasi.";
+    if(Number.isFinite(result)){
+      return "🧮 Jawapan: "+result;
+    }
 
-if(q.includes("javascript"))
-return "JavaScript digunakan untuk fungsi interaktif seperti chatbot, Settings dan animasi.";
+  }catch(e){}
 
-if(q.includes("python"))
-return "Python ialah bahasa pengaturcaraan yang banyak digunakan untuk AI, data dan automation.";
-
-if(q.includes("berapa negeri malaysia"))
-return "Malaysia mempunyai 13 negeri dan 3 Wilayah Persekutuan.";
-
-if(q.includes("ibu negara malaysia"))
-return "Ibu negara Malaysia ialah Kuala Lumpur.";
-
-if(q.includes("ibu negara jepun"))
-return "Ibu negara Jepun ialah Tokyo.";
-
-if(q.includes("ibu negara thailand"))
-return "Ibu negara Thailand ialah Bangkok.";
-
-if(q.includes("ibu negara indonesia"))
-return "Ibu negara Indonesia ialah Jakarta.";
-
-if(q.includes("apa itu haiwan"))
-return "Haiwan ialah organisma hidup yang biasanya bergerak dan memperoleh tenaga daripada makanan.";
-
-if(q.includes("sedih"))
-return "Kalau kau tengah sedih, cerita je dekat MoonBot. 🌙";
-
-if(q.includes("terima kasih") || q.includes("thanks"))
-return "Sama-sama wei 😎🌙";
-
-return "Aku belum ada jawapan khusus untuk soalan tu dalam V6. Cuba tanya tentang MoonBot, coding, Malaysia atau pengetahuan am.";
-
+  return null;
 }
 
 
-function toggleSettings(){
+/* =========================
+   MAIN BRAIN
+========================= */
 
-document
-.getElementById("settings")
-.classList.toggle("show");
+function brain(original){
 
+  const q=normalize(original);
+
+  /* MATH */
+  const math=mathAnswer(q);
+
+  if(math){
+    return moodText(math);
+  }
+
+
+  /* GREETINGS */
+
+  if(
+    q==="hai" ||
+    q==="hi" ||
+    q==="hello" ||
+    q.includes("assalamualaikum") ||
+    q.includes("helo")
+  ){
+
+    return moodText(
+      "Hai! 👋 Saya MoonBot V6. Apa yang kau nak tanya?"
+    );
+  }
+
+
+  /* IDENTITY */
+
+  if(
+    q.includes("siapa kau") ||
+    q.includes("apa itu moonbot") ||
+    q.includes("siapa moonbot")
+  ){
+
+    return moodText(
+`🤖 Saya MoonBot V6.
+
+Saya ialah chatbot/coding robot yang dibina menggunakan HTML, CSS dan JavaScript.
+
+Pencipta: Nazreel
+Tahun: 2026
+Dibantu oleh: ChatGPT`
+    );
+  }
+
+
+  /* CREATOR */
+
+  if(
+    q.includes("siapa pencipta") ||
+    q.includes("siapa creator") ||
+    q.includes("siapa buat kau") ||
+    q.includes("siapa cipta moonbot")
+  ){
+
+    return moodText(
+`👨‍💻 Pencipta MoonBot ialah Nazreel.
+
+MoonBot bermula pada tahun 2026 sebagai idea untuk membina chatbot sendiri. Projek ini dibangunkan menggunakan HTML, CSS dan JavaScript dengan bantuan ChatGPT.`
+    );
+  }
+
+
+  /* HISTORY */
+
+  if(
+    q.includes("sejarah moonbot") ||
+    q.includes("sejarah pencipta") ||
+    q.includes("asal moonbot")
+  ){
+
+    return moodText(
+`📜 Sejarah MoonBot:
+
+Pada tahun 2026, Nazreel mendapat idea untuk mencipta chatbot sendiri. Dengan bantuan ChatGPT, Nazreel mula belajar membina chatbot menggunakan HTML, CSS dan JavaScript.
+
+Daripada idea kecil itu lahirlah MoonBot. Projek tersebut berkembang melalui beberapa versi sehingga MoonBot V6.
+
+MoonBot V6 membawa konsep:
+🧠 Intelligence
+💻 Coding
+🌍 Knowledge
+🎙️ Voice
+💾 Memory
+🌙 Futuristic UI`
+    );
+  }
+
+
+  /* MALAYSIA */
+
+  if(
+    q==="malaysia" ||
+    q.includes("apa itu malaysia") ||
+    q.includes("negara malaysia") ||
+    q.includes("tentang malaysia")
+  ){
+
+    return moodText(
+`🇲🇾 Malaysia ialah sebuah negara di Asia Tenggara.
+
+Ibu negara: Kuala Lumpur
+Pusat pentadbiran Persekutuan: Putrajaya
+Malaysia mempunyai 13 negeri dan 3 Wilayah Persekutuan.
+
+Malaysia terdiri daripada Semenanjung Malaysia serta Sabah dan Sarawak di Borneo.`
+    );
+  }
+
+
+  /* NEGERI */
+
+  if(
+    q.includes("berapa negeri malaysia") ||
+    q.includes("jumlah negeri malaysia")
+  ){
+
+    return "🇲🇾 Malaysia mempunyai 13 negeri dan 3 Wilayah Persekutuan.";
+  }
+
+
+  /* CAPITAL */
+
+  if(
+    q.includes("ibu negara malaysia") ||
+    q.includes("capital malaysia")
+  ){
+
+    return "🇲🇾 Ibu negara Malaysia ialah Kuala Lumpur.";
+  }
+
+
+  /* SCIENCE */
+
+  if(
+    q.includes("apa itu fotosintesis") ||
+    q.includes("fotosintesis")
+  ){
+
+    return `🌱 Fotosintesis ialah proses tumbuhan menghasilkan makanan menggunakan cahaya matahari, air dan karbon dioksida.
+
+Oksigen turut dibebaskan dalam proses tersebut.`;
+  }
+
+
+  if(
+    q.includes("planet") &&
+    (q.includes("terbesar") || q.includes("besar"))
+  ){
+
+    return "🪐 Planet terbesar dalam Sistem Suria ialah Musytari (Jupiter).";
+  }
+
+
+  if(
+    q.includes("matahari") &&
+    q.includes("planet")
+  ){
+
+    return "☀️ Matahari ialah sebuah bintang di pusat Sistem Suria.";
+  }
+
+
+  /* HISTORY */
+
+  if(
+    q.includes("tunku abdul rahman") ||
+    q.includes("tunku abdul rahman")
+  ){
+
+    return `📜 Tunku Abdul Rahman Putra Al-Haj ialah tokoh penting dalam sejarah Malaysia dan merupakan Perdana Menteri pertama Persekutuan Tanah Melayu/Malaysia.
+
+Beliau dikenali sebagai salah seorang tokoh utama dalam usaha mencapai kemerdekaan.`;
+  }
+
+
+  if(q.includes("kemerdekaan malaysia") ||
+     q.includes("merdeka malaysia")){
+
+    return `🇲🇾 Hari Kebangsaan Malaysia disambut pada 31 Ogos.
+
+Persekutuan Tanah Melayu mencapai kemerdekaan pada 31 Ogos 1957.`;
+  }
+
+
+  /* GEOGRAPHY */
+
+  if(
+    q.includes("benua") ||
+    q.includes("continent")
+  ){
+
+    return `🌍 Antara benua utama dunia ialah:
+
+Asia
+Afrika
+Eropah
+Amerika Utara
+Amerika Selatan
+Australia/Oceania
+Antartika`;
+  }
+
+
+  /* GENERAL KNOWLEDGE */
+
+  if(
+    q.includes("siapa ronaldo")
+  ){
+
+    return `⚽ Cristiano Ronaldo ialah pemain bola sepak dari Portugal yang terkenal di peringkat antarabangsa. Beliau bermain sebagai penyerang dan pernah mewakili beberapa kelab besar Eropah.`;
+  }
+
+
+  if(
+    q.includes("siapa messi")
+  ){
+
+    return `⚽ Lionel Messi ialah pemain bola sepak Argentina yang terkenal dengan kawalan bola, hantaran dan kemahiran menjaringkan gol.`;
+  }
+
+
+  if(
+    q.includes("siapa upin ipin")
+  ){
+
+    return `📺 Upin & Ipin ialah watak kembar dalam siri animasi Malaysia yang dihasilkan oleh Les' Copaque Production.`;
+  }
+
+
+  /* CODING */
+
+  if(
+    q.includes("html")
+  ){
+
+    return `💻 HTML ialah bahasa markup yang digunakan untuk membina struktur halaman web.
+
+Contoh:
+<h1>Hello MoonBot</h1>`;
+  }
+
+
+  if(
+    q.includes("css")
+  ){
+
+    return `🎨 CSS digunakan untuk menggayakan halaman web seperti warna, saiz, kedudukan, animasi dan susun atur.`;
+  }
+
+
+  if(
+    q.includes("javascript") ||
+    q==="js"
+  ){
+
+    return `⚙️ JavaScript ialah bahasa pengaturcaraan yang boleh menjadikan laman web interaktif.
+
+Contohnya mengendalikan button, input, animasi dan data.`;
+  }
+
+
+  if(
+    q.includes("python")
+  ){
+
+    return `🐍 Python ialah bahasa pengaturcaraan yang banyak digunakan untuk pembelajaran, automasi, data, aplikasi dan kecerdasan buatan.`;
+  }
+
+
+  /* SUBJECT */
+
+  if(
+    q.includes("matematik") ||
+    q.includes("math")
+  ){
+
+    return `🧮 Matematik melibatkan topik seperti:
+
+• Operasi asas
+• Pecahan
+• Perpuluhan
+• Peratus
+• Nisbah
+• Purata
+• Algebra
+• Geometri
+• Ukuran
+• Data dan graf
+
+Cuba beri saya soalan matematik.`;
+  }
+
+
+  if(
+    q.includes("sains")
+  ){
+
+    return `🔬 Saya boleh bantu topik Sains seperti:
+
+• Manusia
+• Haiwan
+• Tumbuhan
+• Tenaga
+• Bahan
+• Elektrik
+• Bumi
+• Angkasa
+• Sistem Suria
+• Alam sekitar`;
+  }
+
+
+  if(
+    q.includes("sejarah")
+  ){
+
+    return `📜 Saya boleh bantu Sejarah termasuk sejarah Malaysia, tokoh, kerajaan Melayu, kemerdekaan dan sejarah dunia asas.`;
+  }
+
+
+  if(
+    q.includes("geografi")
+  ){
+
+    return `🌍 Saya boleh bantu Geografi seperti peta, negara, benua, bentuk muka bumi, cuaca, iklim dan sumber alam.`;
+  }
+
+
+  if(
+    q.includes("bahasa melayu") ||
+    q.includes("tatabahasa") ||
+    q.includes("kata hubung") ||
+    q.includes("kata nafi")
+  ){
+
+    return `📖 Bahasa Melayu:
+
+Saya boleh bantu tatabahasa, kata hubung, kata nafi, imbuhan, peribahasa, kosa kata, pemahaman dan penulisan.`;
+  }
+
+
+  if(
+    q.includes("english") ||
+    q.includes("bahasa inggeris")
+  ){
+
+    return `🇬🇧 English:
+
+I can help with basic grammar, vocabulary, sentence construction, reading comprehension and translation.`;
+  }
+
+
+  if(
+    q.includes("rbt") ||
+    q.includes("ict") ||
+    q.includes("teknologi")
+  ){
+
+    return `🛠️ RBT/ICT melibatkan reka bentuk, teknologi, komputer, sistem, algoritma dan asas pengaturcaraan.`;
+  }
+
+
+  if(
+    q.includes("psv") ||
+    q.includes("seni")
+  ){
+
+    return `🎨 PSV berkaitan seni visual seperti garisan, warna, bentuk, rupa, ruang, corak, rekaan dan apresiasi seni.`;
+  }
+
+
+  if(
+    q.includes("muzik")
+  ){
+
+    return `🎵 Muzik merangkumi melodi, irama, tempo, dinamik, notasi, alat muzik dan elemen muzik.`;
+  }
+
+
+  if(
+    q.includes("pjpk") ||
+    q.includes("sukan")
+  ){
+
+    return `🏃 PJPK dan sukan merangkumi kecergasan, permainan, olahraga, keselamatan, peraturan asas dan gaya hidup sihat.`;
+  }
+
+
+  /* PKSK */
+
+  if(
+    q.includes("pksk")
+  ){
+
+    return `🎯 PKSK ialah Pentaksiran Kemasukan Sekolah Khusus.
+
+Untuk persediaan, fokus pada:
+• Pengetahuan am
+• Bahasa Melayu
+• Sains
+• Matematik/logik
+• Psikometrik
+• Kefahaman
+• Penulisan/karangan`;
+  }
+
+
+  /* LOGIC */
+
+  if(
+    q.includes("logik") ||
+    q.includes("psikometrik")
+  ){
+
+    return `🧠 Soalan logik biasanya menguji corak, hubungan, turutan, penyelesaian masalah dan cara berfikir.
+
+Beri saya satu soalan dan kita boleh cuba selesaikan.`;
+  }
+
+
+  /* MOOD */
+
+  if(
+    q.includes("sedih")
+  ){
+
+    return moodText("Aku faham. Kalau kau tengah sedih, kita boleh sembang perlahan-lahan. 😔");
+  }
+
+
+  if(
+    q.includes("gembira")
+  ){
+
+    return moodText("HAHA mantap! 🔥 Mood baik macam ni memang best.");
+  }
+
+
+  /* THANKS */
+
+  if(
+    q.includes("terima kasih") ||
+    q.includes("thanks")
+  ){
+
+    return moodText("Sama-sama! 😎");
+  }
+
+
+  /* BYE */
+
+  if(
+    q==="bye" ||
+    q.includes("jumpa lagi")
+  ){
+
+    return moodText("Jumpa lagi! 🌙");
+  }
+
+
+  /* UNKNOWN */
+
+  return unknownAnswer(original);
 }
 
 
-function toggleTheme(){
+/* =========================
+   MOOD ENGINE
+========================= */
 
-document.body.classList.toggle("light");
+function moodText(text){
 
-localStorage.setItem(
-"moon_theme",
-document.body.classList.contains("light")
-?"light":"dark"
-);
+  if(mood==="gembira"){
+    return "😄 "+text+" 🔥";
+  }
 
+  if(mood==="sedih"){
+    return "😔 "+text;
+  }
+
+  if(mood==="marah"){
+    return "😤 "+text;
+  }
+
+  return text;
 }
 
+
+function unknownAnswer(question){
+
+  if(mood==="gembira"){
+    return `😄 Aku belum ada jawapan khusus untuk "${question}".
+
+Cuba tanya dengan lebih jelas atau beri soalan yang lebih lengkap!`;
+  }
+
+  if(mood==="sedih"){
+    return `😔 Aku belum mempunyai maklumat khusus untuk "${question}".`;
+  }
+
+  if(mood==="marah"){
+    return `😤 Aku belum tahu jawapan khusus untuk "${question}"! Cuba bagi soalan yang lebih jelas.`;
+  }
+
+  return `🤖 Aku belum ada pengetahuan khusus untuk "${question}".
+
+Cuba tanya soalan dengan lebih lengkap.`;
+}
+
+
+/* =========================
+   MOOD BUTTONS
+========================= */
+
+function setMood(value){
+
+  mood=value;
+
+  localStorage.setItem("moonMood",value);
+
+  document.querySelectorAll('[id^="mood-"]')
+    .forEach(b=>b.classList.remove("active"));
+
+  document.getElementById("mood-"+value)
+    .classList.add("active");
+}
+
+
+/* =========================
+   SPEED
+========================= */
 
 function setSpeed(value){
 
-speed=value;
+  speed=value;
 
-document.getElementById("speed").textContent=value;
+  localStorage.setItem("moonSpeed",value);
 
-localStorage.setItem("moon_speed",value);
+  document.querySelectorAll('[id^="speed-"]')
+    .forEach(b=>b.classList.remove("active"));
 
+  document.getElementById("speed-"+value)
+    .classList.add("active");
+
+  document.getElementById("speedLabel").textContent =
+    value.charAt(0).toUpperCase()+value.slice(1);
 }
 
 
+/* =========================
+   THEME
+========================= */
+
+function setTheme(value){
+
+  if(value==="light"){
+    document.body.classList.add("light");
+  }else{
+    document.body.classList.remove("light");
+  }
+
+  localStorage.setItem("moonTheme",value);
+}
+
+
+/* =========================
+   LANGUAGE
+========================= */
+
+function setLanguage(value){
+
+  language=value;
+
+  localStorage.setItem("moonLanguage",value);
+}
+
+
+/* =========================
+   VOICE
+========================= */
+
 function toggleVoice(){
 
-voice=!voice;
+  voice=!voice;
 
-localStorage.setItem("moon_voice",voice);
+  localStorage.setItem("moonVoice",voice);
 
-alert(
-voice
-?"Voice ON 🔊"
-:"Voice OFF 🔇"
-);
-
+  document.getElementById("voiceButton").textContent =
+    voice ? "🔊 Voice ON" : "🔇 Voice OFF";
 }
 
 
 function speak(text){
 
-if(!window.speechSynthesis) return;
+  if(!voice)return;
 
-speechSynthesis.cancel();
+  if(!("speechSynthesis" in window))return;
 
-let u=new SpeechSynthesisUtterance(text);
+  const speech=new SpeechSynthesisUtterance(text);
 
-u.lang="ms-MY";
+  const voices={
+    ms:"ms-MY",
+    en:"en-US",
+    es:"es-ES",
+    fr:"fr-FR",
+    ja:"ja-JP",
+    zh:"zh-CN",
+    ko:"ko-KR"
+  };
 
-speechSynthesis.speak(u);
+  speech.lang=voices[language] || "ms-MY";
 
+  speech.rate =
+    speed==="fast" ? 1.25 :
+    speed==="medium" ? 1.05 : .9;
+
+  speechSynthesis.cancel();
+  speechSynthesis.speak(speech);
 }
 
 
-function voiceInput(){
+/* =========================
+   SETTINGS
+========================= */
 
-const SpeechRecognition=
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
-
-if(!SpeechRecognition){
-
-alert("Browser kau tak support voice input.");
-
-return;
-
-}
-
-const recognition=new SpeechRecognition();
-
-recognition.lang="ms-MY";
-
-recognition.onresult=function(e){
-
-input.value=
-e.results[0][0].transcript;
-
-};
-
-recognition.start();
-
+function toggleSettings(){
+  settings.classList.toggle("show");
 }
 
 
-function newChat(){
+/* =========================
+   HISTORY
+========================= */
 
-chat.innerHTML=`
+function saveHistory(){
 
-<div class="welcome" id="welcome">
+  localStorage.setItem(
+    "moonHistory",
+    JSON.stringify(history.slice(-100))
+  );
+}
 
-<h1>🌙 MoonBot V6</h1>
 
-<p>New chat started.</p>
+function loadHistory(){
 
-</div>
+  history.slice(-50).forEach(item=>{
 
-`;
+    addMessage(
+      item.text,
+      item.type==="user" ? "user" : "bot"
+    );
 
-input.focus();
-
+  });
 }
 
 
 function showHistory(){
 
-if(messages.length===0){
+  if(history.length===0){
+    addBot("🕘 Belum ada history.");
+    return;
+  }
 
-addMessage(
-"MOONBOT",
-"Belum ada history.",
-"bot"
-);
-
-return;
-
-}
-
-addMessage(
-"MOONBOT",
-"History:\n\n"+messages.join("\n"),
-"bot"
-);
-
+  addBot(
+    "🕘 History chat disimpan secara tempatan pada browser ini. Jumlah mesej: "
+    +history.length
+  );
 }
 
 
 function clearHistory(){
 
-messages=[];
+  history=[];
 
-localStorage.removeItem("moon_messages");
+  localStorage.removeItem("moonHistory");
 
-newChat();
-
+  newChat();
 }
 
 
-function load(){
+function newChat(){
 
-const theme=
-localStorage.getItem("moon_theme");
+  chat.innerHTML="";
 
-if(theme==="light")
-document.body.classList.add("light");
+  addBot(
+`🌙 New Chat dimulakan.
 
-speed=
-localStorage.getItem("moon_speed")
-||"Standard";
-
-voice=
-localStorage.getItem("moon_voice")
-==="true";
-
-messages=
-JSON.parse(
-localStorage.getItem("moon_messages")
-||"[]"
-);
-
-document.getElementById("speed").textContent=speed;
-
+Saya MoonBot V6.
+Tanya apa sahaja yang saya tahu. 🚀`
+  );
 }
 
-load();
+
+/* =========================
+   ABOUT
+========================= */
+
+function aboutMoon(){
+
+  addBot(
+`🌙 MOONBOT V6
+
+Creator: Nazreel
+Year: 2026
+Technology: HTML + CSS + JavaScript
+Assisted by: ChatGPT
+
+Quote:
+"Satu idea pada waktu malam menjadi permulaan kepada sebuah projek."
+
+MoonBot V6:
+🧠 Intelligence
+💻 Coding
+🌍 Knowledge
+🎙️ Voice
+💾 Memory
+🌙 Futuristic UI`
+  );
+}
+
+
+/* =========================
+   LOAD SETTINGS
+========================= */
+
+function loadSettings(){
+
+  const theme=localStorage.getItem("moonTheme") || "dark";
+
+  setTheme(theme);
+
+  document.getElementById("themeSelect").value=theme;
+  document.getElementById("languageSelect").value=language;
+
+  setMood(mood);
+  setSpeed(speed);
+
+  document.getElementById("voiceButton").textContent =
+    voice ? "🔊 Voice ON" : "🔇 Voice OFF";
+}
 
 </script>
 
