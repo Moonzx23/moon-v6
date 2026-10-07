@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoonBot V6 — Coding Robot</title>
+
+<style>
+:root{
+  --bg:#070b14;
+  --panel:#0d1422;
+  --panel2:#111a2b;
+  --text:#f5f7ff;
+  --muted:#91a0b8;
+  --accent:#7c5cff;
+  --accent2:#00d9ff;
+  --border:rgba(255,255,255,.09);
+  --danger:#ff5577;
+  --success:#35e6a1;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 20% 10%,rgba(124,92,255,.18),transparent 30%),
+    radial-gradient(circle at 90% 80%,rgba(0,217,255,.12),transparent 30%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:270px;
+  background:rgba(7,11,20,.92);
+  border-right:1px solid var(--border);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  backdrop-filter:blur(20px);
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px;
+}
+
+.logo-icon{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 0 25px rgba(124,92,255,.35);
+  font-size:22px;
+}
+
+.logo h1{
+  margin:0;
+  font-size:18px;
+}
+
+.logo small{
+  color:var(--muted);
+}
+
+.new-chat{
+  border:0;
+  border-radius:13px;
+  padding:13px;
+  color:white;
+  background:linear-gradient(135deg,var(--accent),#5940ff);
+  font-weight:700;
+}
+
+.side-title{
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-top:8px;
+}
+
+.side-btn{
+  width:100%;
+  text-align:left;
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--text);
+  padding:11px;
+  border-radius:10px;
+}
+
+.side-btn:hover{
+  background:var(--panel2);
+  border-color:var(--border);
+}
+
+.sidebar-bottom{
+  margin-top:auto;
+}
+
+/* MAIN */
+
+.main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  height:72px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+  background:rgba(7,11,20,.65);
+  backdrop-filter:blur(15px);
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:var(--success);
+  font-size:13px;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  background:var(--success);
+  border-radius:50%;
+  box-shadow:0 0 12px var(--success);
+}
+
+.mode{
+  background:var(--panel);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:9px 12px;
+  border-radius:10px;
+}
+
+.chat{
+  flex:1;
+  overflow:auto;
+  padding:30px 20px 160px;
+}
+
+.chat-inner{
+  max-width:980px;
+  margin:auto;
+}
+
+.welcome{
+  text-align:center;
+  padding:45px 15px 30px;
+}
+
+.robot{
+  width:100px;
+  height:100px;
+  margin:auto;
+  border-radius:30px;
+  display:grid;
+  place-items:center;
+  font-size:48px;
+  background:
+    linear-gradient(135deg,rgba(124,92,255,.25),rgba(0,217,255,.18));
+  border:1px solid var(--border);
+  box-shadow:
+    0 0 35px rgba(124,92,255,.2),
+    inset 0 0 25px rgba(0,217,255,.05);
+}
+
+.welcome h2{
+  font-size:32px;
+  margin:20px 0 8px;
+}
+
+.welcome p{
+  color:var(--muted);
+  max-width:620px;
+  margin:auto;
+  line-height:1.6;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:28px auto;
+  max-width:850px;
+}
+
+.card{
+  background:rgba(13,20,34,.75);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+  text-align:left;
+}
+
+.card strong{
+  display:block;
+  margin-bottom:6px;
+}
+
+.card span{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.message{
+  display:flex;
+  gap:12px;
+  margin:22px 0;
+}
+
+.avatar{
+  flex:0 0 40px;
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:var(--panel2);
+  border:1px solid var(--border);
+}
+
+.bubble{
+  max-width:850px;
+  line-height:1.65;
+  white-space:pre-wrap;
+}
+
+.user .bubble{
+  background:rgba(124,92,255,.13);
+  border:1px solid rgba(124,92,255,.25);
+  padding:13px 15px;
+  border-radius:15px;
+}
+
+.bot .bubble{
+  padding:4px 0;
+}
+
+.code-box{
+  margin-top:14px;
+  background:#050810;
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.code-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 13px;
+  background:#0b101c;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.code-actions{
+  display:flex;
+  gap:7px;
+}
+
+.code-actions button{
+  border:1px solid var(--border);
+  background:#111827;
+  color:white;
+  border-radius:7px;
+  padding:5px 9px;
+  font-size:11px;
+}
+
+pre{
+  margin:0;
+  padding:15px;
+  overflow:auto;
+  color:#dbe7ff;
+  font-size:13px;
+  line-height:1.55;
+}
+
+/* COMPOSER */
+
+.composer-wrap{
+  position:fixed;
+  bottom:0;
+  left:270px;
+  right:0;
+  padding:15px 20px 20px;
+  background:linear-gradient(transparent,rgba(7,11,20,.98) 35%);
+}
+
+.composer{
+  max-width:980px;
+  margin:auto;
+  background:rgba(13,20,34,.94);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:10px;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  box-shadow:0 10px 40px rgba(0,0,0,.3);
+}
+
+textarea{
+  flex:1;
+  resize:none;
+  min-height:45px;
+  max-height:150px;
+  background:transparent;
+  color:var(--text);
+  border:0;
+  outline:0;
+  padding:11px;
+}
+
+.action{
+  width:43px;
+  height:43px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:white;
+}
+
+.send{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:0;
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:50;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:min(900px,100%);
+  height:min(700px,90vh);
+  background:#0b101b;
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.modal-head{
+  padding:15px 18px;
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+
+.preview{
+  flex:1;
+  background:white;
+}
+
+.preview iframe{
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:800px){
+  .sidebar{
+    display:none;
+  }
+
+  .composer-wrap{
+    left:0;
+  }
+
+  .features{
+    grid-template-columns:1fr;
+  }
+
+  .welcome h2{
+    font-size:25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+  <div class="logo">
+    <div class="logo-icon">🌙</div>
+    <div>
+      <h1>MoonBot V6</h1>
+      <small>Coding Robot</small>
+    </div>
+  </div>
+
+  <button class="new-chat" onclick="newChat()">＋ New Chat</button>
+
+  <div class="side-title">Tools</div>
+
+  <button class="side-btn" onclick="showAbout()">
+    🤖 About MoonBot
+  </button>
+
+  <button class="side-btn" onclick="showHistory()">
+    🕘 History
+  </button>
+
+  <button class="side-btn" onclick="toggleTheme()">
+    🎨 Theme
+  </button>
+
+  <button class="side-btn" onclick="clearChat()">
+    🗑️ Clear Chat
+  </button>
+
+  <div class="side-title">Coding</div>
+
+  <button class="side-btn" onclick="quickPrompt('Buat website HTML simple')">
+    🌐 HTML Website
+  </button>
+
+  <button class="side-btn" onclick="quickPrompt('Buat calculator menggunakan JavaScript')">
+    🧮 JavaScript
+  </button>
+
+  <button class="side-btn" onclick="quickPrompt('Terangkan HTML CSS dan JavaScript')">
+    📚 Learn Coding
+  </button>
+
+  <div class="sidebar-bottom">
+    <small style="color:var(--muted)">
+      MoonBot V6 Demo<br>
+      No API • Local AI
+    </small>
+  </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+  <div>
+    <strong>MoonBot V6</strong>
+    <div class="status">
+      <span class="dot"></span>
+      Coding Robot Online
+    </div>
+  </div>
+
+  <select class="mode" id="mode">
+    <option>Normal</option>
+    <option>Coding</option>
+    <option>Study</option>
+    <option>Creative</option>
+    <option>Quick Answer</option>
+  </select>
+</header>
+
+<section class="chat" id="chat">
+
+<div class="chat-inner">
+
+  <div class="welcome" id="welcome">
+
+    <div class="robot">🤖</div>
+
+    <h2>MoonBot V6</h2>
+
+    <p>
+      Coding Robot Demo yang dibina untuk membantu
+      memahami soalan, menghasilkan kod dan belajar programming.
+    </p>
+
+    <div class="features">
+
+      <div class="card">
+        <strong>💻 Coding</strong>
+        <span>HTML, CSS dan JavaScript.</span>
+      </div>
+
+      <div class="card">
+        <strong>🛠️ Code Helper</strong>
+        <span>Terangkan dan baiki error asas.</span>
+      </div>
+
+      <div class="card">
+        <strong>▶️ Preview</strong>
+        <span>Jalankan demo HTML secara terus.</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+<div class="composer-wrap">
+
+  <div class="composer">
+
+    <button class="action" onclick="startVoice()" title="Voice">
+      🎙️
+    </button>
+
+    <textarea
+      id="input"
+      placeholder="Tanya MoonBot tentang coding..."
+      onkeydown="handleKey(event)"
+    ></textarea>
+
+    <button class="action send" onclick="sendMessage()">
+      ➤
+    </button>
+
+  </div>
+
+</div>
+
+</main>
+
+</div>
+
+<!-- PREVIEW MODAL -->
+
+<div class="modal" id="previewModal">
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+
+      <strong>🌐 HTML Preview</strong>
+
+      <button class="action" onclick="closePreview()">✕</button>
+
+    </div>
+
+    <div class="preview">
+      <iframe id="previewFrame"></iframe>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   MOONBOT V6 — CODING ROBOT DEMO
+   No API
+   No external AI
+   ========================================================= */
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const welcome = document.getElementById("welcome");
+
+let history = JSON.parse(
+  localStorage.getItem("moonbot_v6_history") || "[]"
+);
+
+/* ---------------------------------------------------------
+   BASIC UTILITIES
+--------------------------------------------------------- */
+
+function escapeHTML(text){
+
+  return text
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+function addMessage(type,text,code=null,language="text"){
+
+  welcome.style.display="none";
+
+  const inner=chat.querySelector(".chat-inner");
+
+  const message=document.createElement("div");
+
+  message.className="message "+type;
+
+  const avatar=document.createElement("div");
+
+  avatar.className="avatar";
+
+  avatar.textContent=type==="user"?"👤":"🤖";
+
+  const body=document.createElement("div");
+
+  body.className="bubble";
+
+  body.innerHTML=escapeHTML(text);
+
+  if(code){
+
+    const box=document.createElement("div");
+
+    box.className="code-box";
+
+    const head=document.createElement("div");
+
+    head.className="code-head";
+
+    head.innerHTML=`
+      <span>${language}</span>
+
+      <div class="code-actions">
+
+        <button onclick="copyCode(this)">
+          Copy
+        </button>
+
+        ${
+          language.toLowerCase().includes("html")
+          ?
+          `<button onclick="previewCode(this)">
+            Run
+          </button>`
+          :
+          ""
+        }
+
+      </div>
+    `;
+
+    const pre=document.createElement("pre");
+
+    pre.textContent=code;
+
+    box.appendChild(head);
+
+    box.appendChild(pre);
+
+    body.appendChild(box);
+
+  }
+
+  message.appendChild(avatar);
+
+  message.appendChild(body);
+
+  inner.appendChild(message);
+
+  chat.scrollTop=chat.scrollHeight;
+
+  if(type==="user"){
+
+    history.push({
+      type,
+      text
+    });
+
+    saveHistory();
+
+  }
+
+}
+
+/* ---------------------------------------------------------
+   SAVE HISTORY
+--------------------------------------------------------- */
+
+function saveHistory(){
+
+  localStorage.setItem(
+    "moonbot_v6_history",
+    JSON.stringify(history.slice(-50))
+  );
+
+}
+
+/* ---------------------------------------------------------
+   SEND
+--------------------------------------------------------- */
+
+function sendMessage(){
+
+  const text=input.value.trim();
+
+  if(!text) return;
+
+  addMessage("user",text);
+
+  input.value="";
+
+  setTimeout(()=>{
+
+    const result=moonBrain(text);
+
+    addMessage(
+      "bot",
+      result.text,
+      result.code,
+      result.language
+    );
+
+  },350);
+
+}
+
+function handleKey(e){
+
+  if(e.key==="Enter" && !e.shiftKey){
+
+    e.preventDefault();
+
+    sendMessage();
+
+  }
+
+}
+
+function quickPrompt(text){
+
+  input.value=text;
+
+  input.focus();
+
+}
+
+/* ---------------------------------------------------------
+   MOONBRAIN
+--------------------------------------------------------- */
+
+function moonBrain(raw){
+
+  const q=raw.toLowerCase().trim();
+
+  /* CREATOR */
+
+  if(
+    q.includes("siapa pencipta") ||
+    q.includes("creator") ||
+    q.includes("siapa buat kau") ||
+    q.includes("siapa cipta kau") ||
+    q.includes("pencipta moonbot")
+  ){
+
+    return {
+      text:
+      "Saya MoonBot V6. Saya ialah projek chatbot yang dicipta oleh Nazreel pada tahun 2026. V6 ini ialah Coding Robot Demo yang dibina menggunakan HTML, CSS dan JavaScript."
+    };
+
+  }
+
+  /* HISTORY */
+
+  if(
+    q.includes("sejarah moonbot") ||
+    q.includes("macam mana moonbot dicipta") ||
+    q.includes("sejarah kau")
+  ){
+
+    return {
+      text:
+      "MoonBot bermula pada tahun 2026 apabila Nazreel mendapat idea untuk membina chatbot sendiri. Dengan bantuan ChatGPT, projek ini dibangunkan menggunakan HTML, CSS dan JavaScript. Selepas beberapa perkembangan, MoonBot V5 dibina sebagai demo yang lebih lengkap. V6 pula direka sebagai Coding Robot Demo."
+    };
+
+  }
+
+  /* VERSION */
+
+  if(
+    q.includes("versi apa") ||
+    q.includes("version") ||
+    q.includes("v6")
+  ){
+
+    return {
+      text:
+      "Saya ialah MoonBot V6 — Coding Robot Demo. V5 ialah versi sebelumnya. Versi AI sebenar dengan model dan web search boleh ditambah kemudian menggunakan backend dan API."
+    };
+
+  }
+
+  /* HELLO */
+
+  if(
+    q==="hi" ||
+    q==="hai" ||
+    q==="hello" ||
+    q.includes("hey moon") ||
+    q.includes("wei moon")
+  ){
+
+    return {
+      text:
+      "Hai! 🤖🌙 Saya MoonBot V6. Saya boleh bantu dengan coding, HTML, CSS, JavaScript dan soalan tentang projek MoonBot."
+    };
+
+  }
+
+  /* WHAT CAN YOU DO */
+
+  if(
+    q.includes("boleh buat apa") ||
+    q.includes("kebolehan") ||
+    q.includes("apa yang kau boleh")
+  ){
+
+    return {
+      text:
+      "Saya boleh membantu dengan HTML, CSS, JavaScript, contoh kod, penerangan coding, error asas, calculator, website demo dan maklumat tentang MoonBot."
+    };
+
+  }
+
+  /* HTML */
+
+  if(
+    q.includes("buat website") ||
+    q.includes("website html") ||
+    q.includes("html simple")
+  ){
+
+    return {
+      text:
+      "Ini contoh website HTML ringkas. Tekan Run untuk melihat preview.",
+      language:"HTML",
+      code:
+`<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>Website Saya</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#080b14;
+  color:white;
+  text-align:center;
+  padding:60px;
+}
+
+button{
+  padding:12px 20px;
+  border:0;
+  border-radius:10px;
+  cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Hello MoonBot!</h1>
+
+<p>Ini website HTML saya.</p>
+
+<button onclick="hello()">
+Klik Saya
+</button>
+
+<script>
+function hello(){
+  alert("Hello dari MoonBot!");
+}
+</script>
+
+</body>
+</html>`
+    };
+
+  }
+
+  /* CALCULATOR */
+
+  if(
+    q.includes("calculator") ||
+    q.includes("kalkulator")
+  ){
+
+    return {
+      text:
+      "Ini contoh calculator JavaScript asas.",
+      language:"HTML",
+      code:
+`<!DOCTYPE html>
+<html>
+<head>
+<title>Calculator</title>
+
+<style>
+body{
+  font-family:Arial;
+  text-align:center;
+  padding:50px;
+}
+
+input{
+  padding:12px;
+  margin:5px;
+}
+
+button{
+  padding:12px 18px;
+  margin:5px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Calculator</h1>
+
+<input id="a" type="number" placeholder="Nombor 1">
+
+<input id="b" type="number" placeholder="Nombor 2">
+
+<br>
+
+<button onclick="calc('+')">+</button>
+<button onclick="calc('-')">−</button>
+<button onclick="calc('*')">×</button>
+<button onclick="calc('/')">÷</button>
+
+<h2 id="result">Result</h2>
+
+<script>
+
+function calc(operator){
+
+  const a=Number(
+    document.getElementById("a").value
+  );
+
+  const b=Number(
+    document.getElementById("b").value
+  );
+
+  let answer;
+
+  if(operator==="+"){
+    answer=a+b;
+  }
+
+  if(operator==="-"){
+    answer=a-b;
+  }
+
+  if(operator==="*"){
+    answer=a*b;
+  }
+
+  if(operator==="/"){
+    answer=b===0
+      ? "Tak boleh bahagi 0"
+      : a/b;
+  }
+
+  document.getElementById("result")
+    .textContent=answer;
+
+}
+
+</script>
+
+</body>
+</html>`
+    };
+
+  }
+
+  /* CSS */
+
+  if(
+    q.includes("apa itu css") ||
+    q.includes("terangkan css")
+  ){
+
+    return {
+      text:
+      "CSS digunakan untuk mengawal rupa dan reka bentuk halaman web. Contohnya warna, saiz tulisan, jarak, susunan dan animasi."
+    };
+
+  }
+
+  /* JAVASCRIPT */
+
+  if(
+    q.includes("apa itu javascript") ||
+    q.includes("terangkan javascript")
+  ){
+
+    return {
+      text:
+      "JavaScript ialah bahasa pengaturcaraan yang boleh membuat halaman web menjadi interaktif. Contohnya button, calculator, permainan dan perubahan kandungan."
+    };
+
+  }
+
+  /* HTML */
+
+  if(
+    q.includes("apa itu html") ||
+    q.includes("terangkan html")
+  ){
+
+    return {
+      text:
+      "HTML ialah bahasa markup yang digunakan untuk membina struktur halaman web seperti tajuk, teks, gambar, button dan form."
+    };
+
+  }
+
+  /* ERROR */
+
+  if(
+    q.includes("error") ||
+    q.includes("tak jalan") ||
+    q.includes("tak berfungsi") ||
+    q.includes("rosak")
+  ){
+
+    return {
+      text:
+      "Cuba semak tiga perkara: 1) ejaan nama variable/function, 2) kurungan `{ }`, `( )` dan `[]`, dan 3) pastikan JavaScript berada dalam tag <script>. Kalau kau beri code sebenar, saya boleh cuba semak."
+    };
+
+  }
+
+  /* ROBOT */
+
+  if(
+    q.includes("robot") ||
+    q.includes("ai coding")
+  ){
+
+    return {
+      text:
+      "🤖 Saya MoonBot V6 Coding Robot Demo. Saya direka untuk membantu menghasilkan contoh kod dan menerangkan konsep programming."
+    };
+
+  }
+
+  /* MATH */
+
+  const mathMatch=q.match(
+    /^(\d+(?:\.\d+)?)\s*([\+\-\*\/])\s*(\d+(?:\.\d+)?)$/
+  );
+
+  if(mathMatch){
+
+    const a=Number(mathMatch[1]);
+
+    const op=mathMatch[2];
+
+    const b=Number(mathMatch[3]);
+
+    let answer;
+
+    if(op==="+") answer=a+b;
+
+    if(op==="-") answer=a-b;
+
+    if(op==="*") answer=a*b;
+
+    if(op==="/"){
+      answer=b===0
+        ? "Tak boleh bahagi 0"
+        : a/b;
+    }
+
+    return {
+      text:
+      `${a} ${op} ${b} = ${answer}`
+    };
+
+  }
+
+  /* MALAYSIA */
+
+  if(
+    q.includes("ibu negara malaysia")
+  ){
+
+    return {
+      text:
+      "Ibu negara Malaysia ialah Kuala Lumpur. Putrajaya ialah pusat pentadbiran Persekutuan."
+    };
+
+  }
+
+  /* GENERAL */
+
+  if(
+    q.includes("siapa awak") ||
+    q.includes("siapa kau") ||
+    q.includes("apa itu moonbot")
+  ){
+
+    return {
+      text:
+      "Saya MoonBot V6, Coding Robot Demo ciptaan Nazreel. Saya dibina menggunakan HTML, CSS dan JavaScript."
+    };
+
+  }
+
+  /* CODING GENERAL */
+
+  if(
+    q.includes("coding") ||
+    q.includes("code") ||
+    q.includes("programming")
+  ){
+
+    return {
+      text:
+      "Saya boleh bantu coding asas. Cuba arahan seperti 'buat website HTML', 'buat calculator JavaScript', 'terangkan CSS' atau 'kenapa code saya error'."
+    };
+
+  }
+
+  /* FALLBACK */
+
+  return {
+    text:
+    "Saya faham soalan itu sebagai input umum, tetapi pengetahuan saya dalam demo ini masih terhad kerana MoonBot V6 belum menggunakan model AI/API sebenar. Cuba tanya tentang coding, HTML, CSS, JavaScript, MoonBot atau minta saya buat contoh code."
+  };
+
+}
+
+/* ---------------------------------------------------------
+   COPY CODE
+--------------------------------------------------------- */
+
+function copyCode(button){
+
+  const box=button.closest(".code-box");
+
+  const code=box.querySelector("pre").textContent;
+
+  navigator.clipboard.writeText(code);
+
+  const old=button.textContent;
+
+  button.textContent="Copied!";
+
+  setTimeout(()=>{
+    button.textContent=old;
+  },1200);
+
+}
+
+/* ---------------------------------------------------------
+   PREVIEW
+--------------------------------------------------------- */
+
+function previewCode(button){
+
+  const box=button.closest(".code-box");
+
+  const code=box.querySelector("pre").textContent;
+
+  const modal=document.getElementById("previewModal");
+
+  const frame=document.getElementById("previewFrame");
+
+  frame.srcdoc=code;
+
+  modal.classList.add("show");
+
+}
+
+function closePreview(){
+
+  document
+    .getElementById("previewModal")
+    .classList.remove("show");
+
+}
+
+/* ---------------------------------------------------------
+   NEW CHAT
+--------------------------------------------------------- */
+
+function newChat(){
+
+  chat.querySelector(".chat-inner").innerHTML="";
+
+  chat.querySelector(".chat-inner").appendChild(
+    createWelcome()
+  );
+
+}
+
+function createWelcome(){
+
+  const div=document.createElement("div");
+
+  div.className="welcome";
+
+  div.innerHTML=`
+    <div class="robot">🤖</div>
+
+    <h2>MoonBot V6</h2>
+
+    <p>
+      Coding Robot Demo sedia membantu.
+    </p>
+  `;
+
+  return div;
+
+}
+
+/* ---------------------------------------------------------
+   CLEAR
+--------------------------------------------------------- */
+
+function clearChat(){
+
+  localStorage.removeItem(
+    "moonbot_v6_history"
+  );
+
+  history=[];
+
+  newChat();
+
+}
+
+/* ---------------------------------------------------------
+   ABOUT
+--------------------------------------------------------- */
+
+function showAbout(){
+
+  addMessage(
+    "bot",
+    "🌙 MOONBOT V6\n\n" +
+    "Nama: MoonBot\n" +
+    "Versi: V6 Coding Robot Demo\n" +
+    "Pencipta: Nazreel\n" +
+    "Tahun: 2026\n" +
+    "Teknologi: HTML + CSS + JavaScript\n" +
+    "Bantuan pembangunan: ChatGPT\n\n" +
+    "V6 ialah demo Coding Robot tanpa API."
+  );
+
+}
+
+/* ---------------------------------------------------------
+   HISTORY
+--------------------------------------------------------- */
+
+function showHistory(){
+
+  if(history.length===0){
+
+    addMessage(
+      "bot",
+      "Belum ada sejarah chat."
+    );
+
+    return;
+
+  }
+
+  addMessage(
+    "bot",
+    "🕘 Sejarah chat:\n\n" +
+    history
+      .slice(-10)
+      .map(x=>"• "+x.text)
+      .join("\n")
+  );
+
+}
+
+/* ---------------------------------------------------------
+   THEME
+--------------------------------------------------------- */
+
+function toggleTheme(){
+
+  document.body.classList.toggle("light");
+
+  const light=document.body.classList.contains("light");
+
+  if(light){
+
+    document.documentElement.style.setProperty(
+      "--bg",
+      "#eef3ff"
+    );
+
+    document.documentElement.style.setProperty(
+      "--panel",
+      "#ffffff"
+    );
+
+    document.documentElement.style.setProperty(
+      "--panel2",
+      "#f1f5ff"
+    );
+
+    document.documentElement.style.setProperty(
+      "--text",
+      "#111827"
+    );
+
+    document.documentElement.style.setProperty(
+      "--muted",
+      "#5f6b7a"
+    );
+
+  }else{
+
+    document.documentElement.style.setProperty(
+      "--bg",
+      "#070b14"
+    );
+
+    document.documentElement.style.setProperty(
+      "--panel",
+      "#0d1422"
+    );
+
+    document.documentElement.style.setProperty(
+      "--panel2",
+      "#111a2b"
+    );
+
+    document.documentElement.style.setProperty(
+      "--text",
+      "#f5f7ff"
+    );
+
+    document.documentElement.style.setProperty(
+      "--muted",
+      "#91a0b8"
+    );
+
+  }
+
+}
+
+/* ---------------------------------------------------------
+   VOICE
+--------------------------------------------------------- */
+
+function startVoice(){
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+
+    addMessage(
+      "bot",
+      "Browser ini tidak menyokong voice recognition."
+    );
+
+    return;
+
+  }
+
+  const recognition=new SpeechRecognition();
+
+  recognition.lang="ms-MY";
+
+  recognition.interimResults=false;
+
+  recognition.start();
+
+  recognition.onresult=function(event){
+
+    input.value=
+      event.results[0][0].transcript;
+
+    input.focus();
+
+  };
+
+  recognition.onerror=function(){
+
+    addMessage(
+      "bot",
+      "Voice recognition tidak dapat digunakan sekarang."
+    );
+
+  };
+
+}
+
+/* ---------------------------------------------------------
+   LOAD HISTORY
+--------------------------------------------------------- */
+
+function loadHistory(){
+
+  if(history.length===0) return;
+
+  history.forEach(item=>{
+
+    addMessage(
+      item.type,
+      item.text
+    );
+
+  });
+
+}
+
+/* ---------------------------------------------------------
+   START
+--------------------------------------------------------- */
+
+console.log(
+  "MoonBot V6 Coding Robot Demo loaded."
+);
+
+</script>
+
+</body>
+</html>
